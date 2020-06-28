@@ -72,7 +72,7 @@ class BiMaskSeg(pl.LightningModule):
             {'params': self.parameters_dict['new_parameters'], 'lr': self.hparams.learning_rate * 100}
         ]
         optimizer = torch.optim.SGD(params, momentum=0.9, weight_decay=1e-3)
-        scheduler = optim.lr_scheduler.ExponentialLR(optimizer, gamma=0.97)
+        scheduler = optim.lr_scheduler.MultiStepLR(optimizer,milestones=self.hparams.milestones)
         return {"optimizer":optimizer,"lr_scheduler":scheduler}
 
     def training_step(self, batch, batch_idx):
@@ -162,10 +162,8 @@ class BiMaskSeg(pl.LightningModule):
         for idx in range(Nimg):
             dices[idx, :] = seg_eval(pred_total[idx], y_total[idx], range(self.hparams.n_seg_classes))
         print("avg_loss = \n",avg_loss)
-        print("dice.mean(axis=0) = ",dices.mean(axis=0))
-        for idx in range(1, self.hparams.n_seg_classes):
-            mean_dice_per_task = np.mean(dices[:, idx])
-            print('mean dice for class-{} is {}'.format(idx, mean_dice_per_task))
+        print("dice_each_class(val) = ",dices.mean(axis=0))
+        self.logger.experiment.add_text("dice_each_class", str(dices.mean(axis=0)), self.current_epoch)
         mDice = dices.mean()
         logs = {"val_loss":avg_loss,"mDice":mDice}
         return {'log': logs}
@@ -199,7 +197,7 @@ if __name__ == '__main__':
     trainer = Trainer(checkpoint_callback=checkpoint_callback,
                       callbacks=[lr_logger],
                       gpus=hparams.gpu_id,
-                      default_root_dir='results/logs/{}'.format(os.path.basename(__file__)[:-3]),
+                      default_root_dir='results/{}'.format(os.path.basename(__file__)[:-3]),
                       max_epochs = hparams.n_epochs,
                       check_val_every_n_epoch=25,
                       val_percent_check=0.5
