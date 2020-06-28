@@ -1,0 +1,9 @@
+{
+  "BiMask": {
+    "fp_train":  "data/cache/BiMask_train.txt",
+    "fp_val": "data/cache/BiMask_val.txt"
+  },
+  "D_TriPair":{
+    "train_val_split": "data/raw/test_train_split.json"
+  }
+}
