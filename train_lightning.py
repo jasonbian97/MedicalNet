@@ -161,7 +161,7 @@ class BiMaskSeg(pl.LightningModule):
         dices = np.zeros([Nimg, self.hparams.n_seg_classes])
         for idx in range(Nimg):
             dices[idx, :] = seg_eval(pred_total[idx], y_total[idx], range(self.hparams.n_seg_classes))
-        print("avg_loss = \n",avg_loss)
+        print("avg_loss(val) = ",avg_loss)
         print("dice_each_class(val) = ",dices.mean(axis=0))
         self.logger.experiment.add_text("dice_each_class", str(dices.mean(axis=0)), self.current_epoch)
         mDice = dices.mean()

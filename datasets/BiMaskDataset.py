@@ -87,7 +87,11 @@ class TriPairDataset(Dataset):
             img = nibabel.load(img_name)  # We have transposed the data from WHD format to DHW
             assert img is not None
             # data processing
-            img_array = self.__testing_data_process__(img,normalization = True)
+            if self.option == "CT-only":
+                img_array = self.__testing_data_process__(img,normalization = True)
+            else:
+                img_array = self.__testing_data_process__(img, normalization=False)
+
             ann_array = self.__testing_data_process__(ann_img, normalization = False)
             # 2 tensor array
             img_array = self.__nii2tensorarray__(img_array)
