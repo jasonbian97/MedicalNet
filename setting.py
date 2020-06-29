@@ -37,7 +37,7 @@ def parse_opts():
         'Initial learning rate (divided by 10 while training by lr scheduler)')
     parser.add_argument(
         '--milestones',  # set to 0.001 when finetune
-        default=[50,50,100],
+        default=[50,100,150],
         type=list,
         help=
         'Initial learning rate (divided by 10 while training by lr scheduler)')

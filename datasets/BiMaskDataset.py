@@ -186,7 +186,7 @@ class TriPairDataset(Dataset):
         return data[Z_min: Z_max, Y_min: Y_max, X_min: X_max], label[Z_min: Z_max, Y_min: Y_max, X_min: X_max]
 
     def __rotate_aug__(self, image, segmentation):
-        rz_aroundz = np.random.uniform(low=-180.0, high=180.0)
+        rz_aroundz = np.random.uniform(low=-30.0, high=30.0)
         rz_aroundxy = np.random.uniform(low=-15.0, high=15.0)
         rd = random.randint(0, 2)
 
@@ -216,17 +216,34 @@ class TriPairDataset(Dataset):
         return data
 
 
+    # def __itensity_normalize_one_volume__(self, volume):
+    #     """
+    #     normalize the itensity of an nd volume based on the mean and std
+    #     inputs:
+    #         volume: the input nd volume
+    #     outputs:
+    #         out: the normalized nd volume
+    #     """
+    #
+    #     pixels = volume
+    #     mean = pixels.mean()
+    #     std = pixels.std()
+    #     out = (volume - mean) / std
+    #     return out
+
     def __itensity_normalize_one_volume__(self, volume):
         """
-        normalize the itensity of an nd volume based on the mean and std
+        normalize the itensity of an nd volume based on the mean and std of nonzeor region
         inputs:
             volume: the input nd volume
         outputs:
             out: the normalized nd volume
         """
 
-        pixels = volume
+        pixels = volume[volume > 0]
         mean = pixels.mean()
         std = pixels.std()
         out = (volume - mean) / std
+        out_random = np.random.normal(0, 1, size=volume.shape)
+        out[volume == 0] = out_random[volume == 0]
         return out

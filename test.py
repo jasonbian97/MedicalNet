@@ -37,7 +37,7 @@ def seg_eval(pred, label, clss):
         inter = len(np.where(s >= 2)[0])
         conv = len(np.where(s >= 1)[0]) + inter
         try:
-            dice = 2.0 * inter / conv
+            dice = (2.0 * inter + 0.01) / (conv+0.01)
         except:
             print("conv is zeros when dice = 2.0 * inter / conv")
             dice = -1

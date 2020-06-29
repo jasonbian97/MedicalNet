@@ -164,8 +164,9 @@ class BiMaskSeg(pl.LightningModule):
         print("avg_loss(val) = ",avg_loss)
         print("dice_each_class(val) = ",dices.mean(axis=0))
         self.logger.experiment.add_text("dice_each_class", str(dices.mean(axis=0)), self.current_epoch)
+        # print(self.trainer.lr_schedulers.get_lr())
         mDice = dices.mean()
-        logs = {"val_loss":avg_loss,"mDice":mDice}
+        logs = {"val_loss":avg_loss,"mDice":torch.tensor(mDice)}
         return {'log': logs}
 
 
